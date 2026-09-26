@@ -6,10 +6,6 @@ auth_working.txt.zip
 redteam.txt
 *.pkl
 
-# Generated figures
-fig_auroc.pdf
-fig_ablation.pdf
-
 # Environment and OS files
 __pycache__/
 *.pyc
