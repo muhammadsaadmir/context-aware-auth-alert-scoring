@@ -1,0 +1,26 @@
+Loading data ...
+Train 11,911,548 rows | Test 39,119,508 rows | combined 51,031,056 (should equal 51,031,056)
+
+Distinct src_user values: 32,265
+Pattern-matched (DENSE regime) users: 3,962
+Remaining (SPARSE regime) users:      28,303
+
+DENSE regime: users=3,962  rows=49,356,788  mean events/user=12,457.5  median=68
+
+SPARSE regime: users=28,303  rows=1,674,268  mean events/user=59.2  median=21
+
+Overrepresentation ratio (dense/sparse, mean events per user):   210.6x
+Overrepresentation ratio (dense/sparse, median events per user): 3.2x
+
+Share of ALL rows in the dense regime: 49,356,788/51,031,056 = 96.72%
+Share of TEST NORMAL rows in the dense regime: 37,839,920/39,119,426 = 96.73%
+
+Red-team users (from redteam.txt): 104 distinct; 104 present as src_user in the working data
+  rows=19,235,561  mean events/user=184,957.3  median=34,952
+  red-team mean vs sparse-regime mean: 3,126.6x
+
+Caveat: the original grep matched substrings anywhere in the raw line;
+classification here is by src_user only, so dense-regime rows are
+counted conservatively.
+
+Done.

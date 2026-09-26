@@ -1,0 +1,34 @@
+Loading test_features.pkl ...
+Test events: 39,119,508   Attacks: 82   Normal: 39,119,426
+
+Feature means agree with the stage-3 capture for all four features (asserted).
+
+=== SINGLE-FEATURE AUROC (each raw feature used as the score on its own) ===
+AUROC = P(attack value > normal value) + 0.5 P(equal); above 0.500 means
+attacks rank higher than normal events on that feature, below means lower.
+
+feature                        AUROC   attack mean normal mean   direction at rank level
+historical_fail_propensity    0.7051         0.012       0.024   attacks rank higher
+time_deviation                0.3189         3.162       5.364   attacks rank lower
+src_novelty                   0.5324         0.122       0.057   attacks rank higher
+dst_novelty                   0.5124         0.085       0.061   attacks rank higher
+
+=== BINARY FLAGS: closed form 0.5 + 0.5 (p_attack - p_normal) ===
+src_novelty    p_attack=0.1220  p_normal=0.0572  closed form=0.5324  roc_auc_score=0.5324  (agree, asserted)
+dst_novelty    p_attack=0.0854  p_normal=0.0605  closed form=0.5124  roc_auc_score=0.5124  (agree, asserted)
+
+=== NOVELTY-ONLY SCORER (0.5 x src_novelty + 0.5 x dst_novelty) ===
+AUROC = 0.5495   (Section 6.3 names this as the most direct next experiment)
+
+=== historical_fail_propensity: mean against rank ===
+share of events with propensity exactly 0:  attacks 0.2195   normal 0.4445
+median propensity:                          attacks 0.0003   normal 0.0000
+mean propensity (Table 5.1):                attacks 0.012   normal 0.024
+The mean is lower for attacks and the AUROC is above 0.5: the normal side
+carries a heavier upper tail while more of it sits at zero. A mean sees the
+tail; a rank statistic sees the point mass. The two do not disagree, they
+measure different things.
+
+Single-feature AUROC is invariant to the monotone min-max scaling of stage 4,
+so these values apply to the scaled features the scorers consume.
+Done.

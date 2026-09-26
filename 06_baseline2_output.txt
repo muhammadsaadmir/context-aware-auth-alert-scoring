@@ -1,0 +1,67 @@
+Loading data ...
+Train 11,911,548 rows, 610 attacks | Test 39,119,508 rows, 82 attacks
+
+====================================================================
+ EXPERIMENT A - what does Baseline 2 weight?
+====================================================================
+
+AUROC (unpermuted, should reproduce 0.787): 0.787
+
+Coefficients:
+  user   +0.000027
+  src    -0.000469
+  dst    +0.000051
+  hour   +0.109943
+  fail   -9.324320
+  intercept +0.380968
+
+Contribution of each column to the score spread, |coef| x std(column):
+  src          1.8313    41.7% of total
+  fail         1.5532    35.4% of total
+  hour         0.6984    15.9% of total
+  dst          0.1841     4.2% of total
+  user         0.1235     2.8% of total
+
+====================================================================
+ EXPERIMENT B - does the advantage survive a permuted encoding?
+====================================================================
+
+The identity codes are randomly relabelled. Categories, frequencies and
+labels are unchanged; only the arbitrary alphabetical ordering is destroyed.
+
+  permutation 1: AUROC = 0.594
+  permutation 2: AUROC = 0.815
+  permutation 3: AUROC = 0.860
+  permutation 4: AUROC = 0.635
+  permutation 5: AUROC = 0.705
+  permutation 6: AUROC = 0.722
+  permutation 7: AUROC = 0.671
+  permutation 8: AUROC = 0.911
+  permutation 9: AUROC = 0.612
+  permutation 10: AUROC = 0.834
+  permutation 11: AUROC = 0.827
+  permutation 12: AUROC = 0.635
+  permutation 13: AUROC = 0.708
+  permutation 14: AUROC = 0.721
+  permutation 15: AUROC = 0.923
+  permutation 16: AUROC = 0.732
+  permutation 17: AUROC = 0.795
+  permutation 18: AUROC = 0.620
+  permutation 19: AUROC = 0.683
+  permutation 20: AUROC = 0.770
+
+  unpermuted        : 0.787
+  permuted (mean)   : 0.739   over 20 draws
+  difference        : +0.048
+
+====================================================================
+ EXPERIMENT C - what remains without the identity columns?
+====================================================================
+
+  full model (user, src, dst, hour, fail) : 0.787
+  behavioural only (hour, fail)           : 0.608
+  permuted identity (mean)                : 0.739
+
+  identity contribution above behavioural : +0.179
+
+Done.

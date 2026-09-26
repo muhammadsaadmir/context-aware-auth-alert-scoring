@@ -1,0 +1,13 @@
+Loading training and test data...
+Train: 11,911,548  Test: 39,119,508
+Computing features from training period only...
+Applying features to test set...
+
+Feature means — ATTACKS vs NORMAL:
+  historical_fail_propensity attacks=0.012  normal=0.024
+  time_deviation       attacks=3.162  normal=5.364
+  src_novelty          attacks=0.122  normal=0.057
+  dst_novelty          attacks=0.085  normal=0.061
+
+Saved test_features.pkl
+Feature engineering complete.

@@ -1,0 +1,59 @@
+Loading data ...
+Train 11,911,548 rows, 610 attacks | Test 39,119,508 rows, 82 attacks
+
+====================================================================
+ EXPERIMENT A - identity overlap between training-attack rows
+               and the test partition (hypothesis a)
+====================================================================
+
+Identifiers in TRAINING ATTACK rows: 87 users, 4 src hosts, 281 dst hosts (285 distinct hosts)
+
+membership criterion                                  attacks   normal (base rate)
+src_computer in train-attack src set             82/82 =100.0%        2,255 =  0.01%
+dst_computer in train-attack dst set             59/82 = 72.0%   19,132,169 = 48.91%
+at least one host in train-attack host sets      82/82 =100.0%   19,133,108 = 48.91%
+src_user in train-attack user set                67/82 = 81.7%   14,285,513 = 36.52%
+any identifier overlaps (host or user)           82/82 =100.0%   28,433,491 = 72.68%
+
+====================================================================
+ EXPERIMENT B - oracle columns in Baseline 2b (hypothesis b)
+====================================================================
+
+Refitting Baseline 2b (one-hot, training vocabulary only) ...
+Reproduction check - test AUROC (should reproduce 1.000): 1.000
+
+Top 20 features by |coefficient|:
+rank feature                                  coef   train_n  train_attack_n  pct_attack  pure  in_test_attacks
+   1 src_computer_C17693                   +23.828     1,187             590       49.7%    no            70/82
+   2 src_computer_C22409                   +12.608       342              10        2.9%    no             0/82
+   3 src_computer_C19932                    +9.786       383               7        1.8%    no            12/82
+   4 src_user_U737@DOM1                     +9.692    13,234              17        0.1%    no            13/82
+   5 src_user_U748@DOM1                     +7.015    16,400              26        0.2%    no             0/82
+   6 dst_computer_C1493                     +6.410        26               3       11.5%    no             0/82
+   7 src_computer_C18025                    +6.403        79               3        3.8%    no             0/82
+   8 src_user_U3486@DOM1                    +4.211    12,974               2        0.0%    no             0/82
+   9 src_user_U66@DOM1                      -3.873 2,553,497             110        0.0%    no             8/82
+  10 dst_computer_C754                      +3.163    41,315              10        0.0%    no             0/82
+  11 src_user_U1653@DOM1                    +2.640    82,193              15        0.0%    no             0/82
+  12 dst_computer_C528                      -2.275   518,719               3        0.0%    no             0/82
+  13 src_computer_C754                      -1.700    15,887               0        0.0%    no             0/82
+  14 dst_computer_C2327                     -1.434   280,512               0        0.0%    no             0/82
+  15 src_computer_C368                      -1.394   322,112               0        0.0%    no             0/82
+  16 src_computer_C612                      -1.350   308,169               0        0.0%    no             0/82
+  17 dst_computer_C2162                     -1.314   261,878               0        0.0%    no             0/82
+  18 src_user_U78@DOM1                      -1.286   308,730               2        0.0%    no             0/82
+  19 src_computer_C625                      -1.250   288,884               0        0.0%    no             0/82
+  20 dst_computer_C625                      -1.239   588,190               2        0.0%    no             1/82
+
+Top-20 table written to b2b_mechanism_top20.csv
+
+Purity census over the full one-hot vocabulary:
+  columns occurring in training:            45,906
+  columns 100% attack in training (pure):   0
+  pure columns with >= 2 training rows:     0
+  share of positive one-hot coefficient mass on pure columns: 0.0%
+
+  test ATTACK rows touching >= 1 pure column: 0/82 = 0.0%
+  test NORMAL rows touching >= 1 pure column: 0/39,119,426 = 0.00%
+
+Done.

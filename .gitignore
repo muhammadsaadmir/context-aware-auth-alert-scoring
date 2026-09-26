@@ -1,0 +1,19 @@
+# LANL dataset and derived data files: not part of the artefact (see README)
+auth.txt
+auth.txt.gz
+auth_working.txt
+auth_working.txt.zip
+redteam.txt
+*.pkl
+
+# Generated figures
+fig_auroc.pdf
+fig_ablation.pdf
+
+# Environment and OS files
+__pycache__/
+*.pyc
+.venv/
+venv/
+.idea/
+.DS_Store

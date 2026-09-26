@@ -1,0 +1,29 @@
+Loading data ...
+Train 11,911,548 rows | Test 39,119,508 rows, 82 attacks
+Reference window: 9,222,877 rows   Fit window: 2,688,671 rows   Attacks in fit window: 299
+
+Refitting the full four-feature context regression ...
+Learned coefficients (should reproduce the stage-4 capture):
+  historical_fail_propensity   -17.142
+  time_deviation               -4.399
+  src_novelty                  +4.443
+  dst_novelty                  +4.064
+Full model  AUROC=0.676  Median attack rank=10,285,800
+Reproduction check passed (coefficients, AUROC and median attack rank equal the capture).
+
+=== DROP-ONE REFIT ABLATION (context-aware logistic regression) ===
+ΔAUROC = full model − model refitted without the feature (full minus ablated,
+as in Table 5.4); Δ median rank = full-model rank − ablated rank.
+
+Without historical_fail_propensity   AUROC=0.688 (Δ-0.013)   Median rank=10,516,714 (Δ-230,914)
+    refitted coefficients: time_deviation=-4.327  src_novelty=+4.339  dst_novelty=+4.017
+Without time_deviation               AUROC=0.377 (Δ+0.299)   Median rank=32,330,822 (Δ-22,045,022)
+    refitted coefficients: historical_fail_propensity=-14.289  src_novelty=+3.969  dst_novelty=+4.472
+Without src_novelty                  AUROC=0.660 (Δ+0.015)   Median rank=11,632,860 (Δ-1,347,059)
+    refitted coefficients: historical_fail_propensity=-6.479  time_deviation=-3.091  dst_novelty=+3.861
+Without dst_novelty                  AUROC=0.687 (Δ-0.011)   Median rank=10,422,636 (Δ-136,835)
+    refitted coefficients: historical_fail_propensity=-8.359  time_deviation=-5.272  src_novelty=+4.250
+
+Each ablated model is a fresh fit on the three remaining scaled features;
+coefficients are conditional on the features present and may change sign.
+Done.

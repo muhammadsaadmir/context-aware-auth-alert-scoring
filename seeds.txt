@@ -1,0 +1,157 @@
+# RANDOM SEEDS AND DETERMINISM — Reproducibility Artefact
+# Thesis: Context-Aware Risk Scoring for Prioritizing
+#         Authentication Alerts in Security Operations Centers
+# Author: Muhammad Saad Mir | Matriculation: 100001795
+# SRH University of Applied Sciences Heidelberg, Campus Leipzig
+# Supervisor: Prof. Dr. Klaus Dieter Schwarz
+# ─────────────────────────────────────────────────────────────────
+#
+# SUMMARY
+# Randomness enters the pipeline in three scripts, each from a seeded
+# generator: 5_bootstrap.py, 6 baseline2 mechanism.py and 9_sensitivityC.py.
+# Every other stage is deterministic. Re-running the pipeline on the same
+# auth_working.txt reproduces every value reported in Chapter 5 of the
+# thesis, including the confidence intervals of Table 5.5, the permutation
+# draws of Section 5.6 and the paired intervals of Table 5.8.
+
+# ── preprocessing.sh ─────────────────────────────────────────────
+# No random seed. The benign sample is a systematic every-1000th-row
+# selection (awk 'NR % 1000 == 0'), not a random draw.
+
+# ── SCRIPT 1: 1_load_check.py ────────────────────────────────────
+# Read and integrity check only. No randomness.
+
+# ── SCRIPT 2: 2_split.py ─────────────────────────────────────────
+# No random seed required. The temporal split is fully deterministic:
+SPLIT_TIME = 1252799        # floor(5,011,199 * 0.25), applied by timestamp
+# Training set:  11,911,548 events (time <= 1,252,799), 610 labelled attack rows
+# Test set:      39,119,508 events (time >  1,252,799),  82 labelled attack rows
+# Normal events in test set: 39,119,426
+# Section 4.4 of the thesis explains why the 749 records of redteam.txt
+# yield 692 labelled rows rather than 749.
+
+# ── SCRIPT 3: 3_features.py ──────────────────────────────────────
+# No random seed required. Feature computation is deterministic given the
+# same train.pkl and test.pkl. The mean login hour is the circular mean on
+# a 24-hour cycle (scipy.stats.circmean, high=24, low=0) and time_deviation
+# is the circular distance to it (at most 12). Users absent from the
+# training period receive propensity 0, mean hour 12 and novelty flags 0.
+# No scaler is fitted in this script.
+
+# ── SCRIPT 4: 4_evaluate.py ──────────────────────────────────────
+# No random_state is set on any LogisticRegression. All three models are
+# constructed as:
+#     LogisticRegression(max_iter=1000, class_weight='balanced')
+# The default lbfgs solver is deterministic for a fixed input matrix, so
+# no seed is needed and none is recorded. The published coefficients of the
+# context model (-17.142, -4.399, +4.443, +4.064) reproduce on every run.
+BASELINE2_LR_MAX_ITER     = 1000
+BASELINE2_LR_CLASS_WEIGHT = "balanced"
+BASELINE2_LR_PENALTY      = "l2"    # scikit-learn default
+BASELINE2_LR_SOLVER       = "lbfgs" # scikit-learn default
+BASELINE2B_LR_MAX_ITER    = 1000    # one-hot diagnostic, same settings
+BASELINE2B_LR_CLASS_WEIGHT= "balanced"
+CONTEXT_LR_MAX_ITER       = 1000
+CONTEXT_LR_CLASS_WEIGHT   = "balanced"
+CONTEXT_LR_PENALTY        = "l2"
+CONTEXT_LR_SOLVER         = "lbfgs"
+#
+# Reference/fit partition of the training period for the context model:
+T_REF = 1002240             # rows with time <  T_REF form the reference window
+                            # (9,222,877 rows); rows with time >= T_REF form
+                            # the fit window (2,688,671 rows, 299 attacks)
+#
+# One MinMaxScaler is fitted on the fit-window feature matrix and applied
+# unchanged to the test features. Deterministic.
+#
+# LabelEncoder (le_user, le_src, le_dst) for Baseline 2: deterministic, no
+# seed; fitted on train and test concatenated so that identifiers seen only
+# in the test period do not raise an unseen-category error (Section 6.3).
+# OneHotEncoder(handle_unknown='ignore') for Baseline 2b: deterministic;
+# vocabulary fitted on the training partition only.
+
+# ── SCRIPT 5: 5_bootstrap.py — seeded ────────────────────────────
+#
+# (a) Fixed negative subsample, drawn ONCE before the loop:
+BOOTSTRAP_NEG_SAMPLE_SEED = 42       # np.random.default_rng(42)
+BOOTSTRAP_NEG_SAMPLE_SIZE = 200000   # rng.choice(..., replace=False)
+#     Drawn without replacement from the 39,119,426 normal test events.
+#
+# (b) The 1,000 paired resamples seed their two draws from the loop
+#     counter, so iteration i always produces the same resample:
+#         boot_attacks = attacks.sample(..., random_state=i)
+#         boot_negs    = neg_sample.sample(..., random_state=i + 10000)
+N_BOOTSTRAP = 1000
+#     All five scorers, and the four ablated equal-weight scores, are
+#     evaluated on the same resample within each iteration, which is what
+#     makes the RQ1 differences and the RQ2 deltas paired comparisons.
+
+# ── SCRIPT 6: 6 baseline2 mechanism.py — seeded ──────────────────
+# Experiment B relabels the integer codes of the three identity columns
+# at random, twenty times, and refits Baseline 2 after each relabelling.
+PERMUTATION_SEED = 42                # np.random.default_rng(SEED)
+N_PERMUTATIONS   = 20                # rng.permutation(n) per column per draw
+# Experiments A and C are deterministic refits.
+
+# ── SCRIPT 7: 7_b2b_mechanism.py ─────────────────────────────────
+# Deterministic: identity overlap counts and one refit of Baseline 2b.
+
+# ── SCRIPT 8: 8_sampling_step0.py ────────────────────────────────
+# Deterministic: counts over the working file.
+
+# ── SCRIPT 9: 9_sensitivityC.py — seeded ─────────────────────────
+# The per-user thinning is a systematic 1-in-1000 selection of each dense
+# user's own rows in time order (positions 0, 1000, 2000, ...), not a random
+# draw. The paired bootstrap against the original scores uses the protocol
+# of 5_bootstrap.py exactly:
+SENSITIVITY_NEG_SAMPLE_SEED = 42     # np.random.default_rng(42), 200,000 negatives
+SENSITIVITY_N_BOOTSTRAP     = 1000   # random_state=i and i+10000 per iteration
+# The context logistic regression of Design C is fitted with the same
+# settings as in 4_evaluate.py and the same T_REF.
+
+# ── SCRIPT 10: 10_novelty_base_rates.py ──────────────────────────
+# Deterministic: counts over test_features.pkl.
+
+# ── SCRIPT 11: 11_threshold_metrics.py ───────────────────────────
+# Deterministic: confusion counts over the scores saved in test_scored.pkl
+# at fixed cuts (top-k with Series.nlargest, as in stage 4; p >= 0.5; score = 1).
+
+# ── SCRIPT 12: 12_feature_auroc.py ───────────────────────────────
+# Deterministic: roc_auc_score of each raw feature in test_features.pkl used
+# as a score on its own, and of the equal-weight sum of the two novelty flags.
+
+# ── SCRIPT 13: 13_lr_ablation.py ─────────────────────────────────
+# Deterministic: five LogisticRegression fits with the settings of 4_evaluate.py
+# (max_iter=1000, class_weight='balanced', lbfgs, no random_state) on the
+# fit-window features rebuilt with T_REF; the full fit is asserted against the
+# stage-4 coefficients, AUROC and median rank before the four refits run.
+
+# ── SPLIT DEFINITION ─────────────────────────────────────────────
+# Time-based, not index-based. To reproduce exactly:
+#   train = auth_working.txt rows where column 1 (time) <= 1,252,799
+#   test  = auth_working.txt rows where column 1 (time) >  1,252,799
+
+# ── DATASET ──────────────────────────────────────────────────────
+DATASET_NAME = "LANL Comprehensive Multi-Source Cyber-Security Events"
+DATASET_DOI  = "10.17021/1179829"
+DATASET_URL  = "https://csr.lanl.gov/data/cyber1/"
+DATASET_FILES_USED = "auth.txt + redteam.txt"
+
+# ── LIBRARY VERSIONS ─────────────────────────────────────────────
+# Exact pinned versions are in requirements.txt, captured with pip freeze
+# from the interpreter that executed the scripts (Python 3.13).
+
+# ── VERIFICATION ─────────────────────────────────────────────────
+# To confirm reproducibility without re-running the full pipeline:
+#     python3 5_bootstrap.py
+# Expected (05_bootstrap_output_batchC_rerun.txt):
+#   Baseline 1 (Severity-Only)             AUROC = 0.492   [0.485 – 0.504]
+#   Baseline 2 (Metadata-Only)             AUROC = 0.787   [0.762 – 0.807]
+#   Baseline 2b (Metadata One-Hot)         AUROC = 1.000   [1.000 – 1.000]
+#   Context-Aware (Equal Weights)          AUROC = 0.416   [0.352 – 0.482]
+#   Context-Aware (Logistic Regression)    AUROC = 0.675   [0.619 – 0.725]
+#   RQ1 vs Baseline 2:  mean -0.111, 95% CI [-0.174, -0.055]
+#   RQ1 vs Baseline 2b: mean -0.325, 95% CI [-0.381, -0.275]
+#   RQ2 (full minus ablated): historical_fail_propensity +0.005 [-0.004, +0.018];
+#       time_deviation -0.309 [-0.375, -0.240]; src_novelty +0.052 [+0.014, +0.097];
+#       dst_novelty +0.035 [+0.002, +0.075]

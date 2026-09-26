@@ -1,0 +1,12 @@
+Loading test_features.pkl ...
+Test rows: 39,119,508   attacks: 82   normals: 39,119,426
+
+flag                   P(=1 | attack)             P(=1 | normal)    ratio
+src_novelty       10/82 =   0.1220     2,236,224/39,119,426 = 0.0572    2.13x
+dst_novelty        7/82 =   0.0854     2,368,172/39,119,426 = 0.0605    1.41x
+
+Consistency check: the stage-3 capture reported flag means src 0.122/0.057 and dst 0.085/0.061 (attacks/normal); the rates above must round to those values.
+
+Both rates are reported side by side; no predictive conclusion is drawn from the attack-side rate alone.
+
+Done.

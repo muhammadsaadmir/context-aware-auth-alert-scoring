@@ -1,0 +1,65 @@
+Loading data...
+Test events: 39,119,508  Attacks: 82
+Training metadata-only baseline...
+Training metadata-only baseline (one-hot)...
+Building context features for training set (three-way partition)...
+Reference window: 9,222,877 rows   Fit window: 2,688,671 rows   Attacks in fit window: 299
+Training context-aware logistic regression (4 context features only)...
+Learned context feature weights (logistic regression coefficients):
+  historical_fail_propensity -17.142
+  time_deviation     -4.399
+  src_novelty        +4.443
+  dst_novelty        +4.064
+
+=== RESULTS ===
+
+Baseline 1 (Severity-Only)
+  AUROC:              0.492
+  Precision@20:       0.000
+  Precision@100:      0.000
+  Precision@1000:     0.000
+  Median attack rank: 20,118,464 out of 39,119,508
+  (random expectation = 19,559,754; lower is better)
+
+Baseline 2 (Metadata-Only)
+  AUROC:              0.787
+  Precision@20:       0.000
+  Precision@100:      0.000
+  Precision@1000:     0.000
+  Median attack rank: 7,795,882 out of 39,119,508
+  (random expectation = 19,559,754; lower is better)
+
+Baseline 2b (Metadata One-Hot)
+  AUROC:              1.000
+  Precision@20:       0.650
+  Precision@100:      0.620
+  Precision@1000:     0.080
+  Median attack rank: 55 out of 39,119,508
+  (random expectation = 19,559,754; lower is better)
+
+Context-Aware (Equal Weights)
+  AUROC:              0.416
+  Precision@20:       0.000
+  Precision@100:      0.000
+  Precision@1000:     0.000
+  Median attack rank: 26,419,052 out of 39,119,508
+  (random expectation = 19,559,754; lower is better)
+
+Context-Aware (Logistic Regression)
+  AUROC:              0.676
+  Precision@20:       0.000
+  Precision@100:      0.000
+  Precision@1000:     0.000
+  Median attack rank: 10,285,800 out of 39,119,508
+  (random expectation = 19,559,754; lower is better)
+
+=== ABLATION STUDY (equal-weight context score) ===
+Full model — AUROC=0.416  Median rank=26,419,052 out of 39,119,508
+
+Without historical_fail_propensity AUROC=0.411 (Δ-0.005)   Median rank=26,304,230 (Δ+114,822)
+Without time_deviation     AUROC=0.731 (Δ+0.315)   Median rank=6,059,682 (Δ+20,359,371)
+Without src_novelty        AUROC=0.364 (Δ-0.052)   Median rank=26,207,256 (Δ+211,796)
+Without dst_novelty        AUROC=0.381 (Δ-0.035)   Median rank=26,181,064 (Δ+237,988)
+Saved test_scored.pkl for bootstrap analysis
+
+Done.

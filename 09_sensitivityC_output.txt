@@ -1,0 +1,77 @@
+Loading data ...
+Train 11,911,548 rows, 610 attacks | Test 39,119,508 rows, 82 attacks
+Dense-regime users in training: 2,545 of 23,612 distinct src_user values
+
+Building thinned full-training feature view ...
+  full-training view: kept 408,263 of 11,911,548 rows (dense rows 11,516,786 -> 13,501)
+Applying Design C features to test set ...
+
+Building thinned reference-window feature view ...
+Reference window: 9,222,877 rows   Fit window: 2,688,671 rows   Attacks in fit window: 299
+  reference-window view: kept 315,003 of 9,222,877 rows (dense rows 8,918,649 -> 10,775)
+
+Training context-aware logistic regression (Design C features)...
+Learned context feature weights (Design C):
+  historical_fail_propensity -1.677
+  time_deviation     -1.981
+  src_novelty        +4.644
+  dst_novelty        +0.652
+
+=== DESIGN C RESULTS ===
+
+Context-Aware (Equal Weights) — Design C
+  AUROC:              0.749
+  Precision@20:       0.000
+  Precision@100:      0.000
+  Precision@1000:     0.000
+  Median attack rank: 6,016,616 out of 39,119,508
+
+Context-Aware (Logistic Regression) — Design C
+  AUROC:              0.865
+  Precision@20:       0.000
+  Precision@100:      0.000
+  Precision@1000:     0.000
+  Median attack rank: 3,735,460 out of 39,119,508
+
+=== ABLATION (equal-weight Design C score, point values) ===
+Full model — AUROC=0.749
+Without historical_fail_propensity   AUROC=0.754 (Δ+0.005)
+Without time_deviation               AUROC=0.788 (Δ+0.039)
+Without src_novelty                  AUROC=0.583 (Δ-0.166)
+Without dst_novelty                  AUROC=0.764 (Δ+0.015)
+
+Saved test_scored_c.pkl (slim; no existing file overwritten)
+Loading original scores from test_scored.pkl ...
+Attacks: 82  Normals: 39,119,426  (same 200,000-negative protocol, seed 42)
+
+Point AUROC (full test set):
+  Context LR     original=0.6755   Design C=0.8646
+  Equal weights  original=0.4159   Design C=0.7487
+
+Running 1000 paired bootstrap resamples...
+  100/1000 done
+  200/1000 done
+  300/1000 done
+  400/1000 done
+  500/1000 done
+  600/1000 done
+  700/1000 done
+  800/1000 done
+  900/1000 done
+  1000/1000 done
+
+=== DESIGN C vs ORIGINAL — PAIRED BOOTSTRAP 95% CIs ===
+
+Context LR     Design C                   +0.864   [+0.833, +0.896]
+Context LR     original                   +0.675   [+0.619, +0.725]
+Context LR     difference (C − original)  +0.189   [+0.133, +0.254]
+
+Equal weights  Design C                   +0.749   [+0.690, +0.800]
+Equal weights  original                   +0.416   [+0.352, +0.482]
+Equal weights  difference (C − original)  +0.333   [+0.263, +0.399]
+
+=== DECISION QUANTITY (rule fixed before execution) ===
+Point ΔAUROC, Context LR (Design C − original), full test set: +0.1890   |Δ| = 0.1890
+  Rule: |Δ| > 0.05 — substantial confound; report as a bounded limitation.
+
+Done.

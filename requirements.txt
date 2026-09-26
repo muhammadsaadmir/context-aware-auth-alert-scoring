@@ -1,0 +1,30 @@
+# Python 3.13 — virtual environment used to execute every Python script in this
+# artefact: the thirteen numbered scripts, mkfigs.py and check_dupes.py.
+# Captured with: pip freeze
+# Note: 'np' below is an unrelated PyPI package installed by an earlier
+# typo. It is not imported by any script in this artefact; numpy is the
+# package actually used. It is left in place so that this file remains a
+# faithful record of the environment in which the reported results were
+# produced.
+certifi==2024.8.30
+contourpy==1.3.1
+cycler==0.12.1
+fonttools==4.55.1
+joblib==1.5.3
+kiwisolver==1.4.7
+matplotlib==3.9.3
+narwhals==2.22.1
+np==1.0.2
+numpy==2.1.3
+packaging==24.2
+pandas==2.2.3
+pillow==11.0.0
+pyparsing==3.2.0
+python-dateutil==2.9.0.post0
+pytz==2024.2
+scikit-learn==1.9.0
+scipy==1.17.1
+seaborn==0.13.2
+six==1.16.0
+threadpoolctl==3.6.0
+tzdata==2024.2

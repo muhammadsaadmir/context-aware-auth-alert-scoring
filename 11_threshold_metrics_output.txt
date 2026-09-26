@@ -1,0 +1,51 @@
+Loading test_scored.pkl ...
+Test events: 39,119,508   Attacks (P): 82   Normal (N): 39,119,426
+
+=== TOP-k RULE (k highest-scoring events alerted) ===
+Baseline 1 (Severity-Only)
+  k = 20                 TP=  0  FP=        20  FN= 82  Precision=0.000  Recall=0.000  F1=0.000  FPR=0.000001
+  k = 100                TP=  0  FP=       100  FN= 82  Precision=0.000  Recall=0.000  F1=0.000  FPR=0.000003
+  k = 1,000              TP=  0  FP=     1,000  FN= 82  Precision=0.000  Recall=0.000  F1=0.000  FPR=0.000026
+
+Baseline 2 (Metadata-Only)
+  k = 20                 TP=  0  FP=        20  FN= 82  Precision=0.000  Recall=0.000  F1=0.000  FPR=0.000001
+  k = 100                TP=  0  FP=       100  FN= 82  Precision=0.000  Recall=0.000  F1=0.000  FPR=0.000003
+  k = 1,000              TP=  0  FP=     1,000  FN= 82  Precision=0.000  Recall=0.000  F1=0.000  FPR=0.000026
+
+Baseline 2b (Metadata One-Hot)
+  k = 20                 TP= 13  FP=         7  FN= 69  Precision=0.650  Recall=0.159  F1=0.255  FPR=0.000000
+  k = 100                TP= 62  FP=        38  FN= 20  Precision=0.620  Recall=0.756  F1=0.681  FPR=0.000001
+  k = 1,000              TP= 80  FP=       920  FN=  2  Precision=0.080  Recall=0.976  F1=0.148  FPR=0.000024
+
+Context-Aware (Equal Weights)
+  k = 20                 TP=  0  FP=        20  FN= 82  Precision=0.000  Recall=0.000  F1=0.000  FPR=0.000001
+  k = 100                TP=  0  FP=       100  FN= 82  Precision=0.000  Recall=0.000  F1=0.000  FPR=0.000003
+  k = 1,000              TP=  0  FP=     1,000  FN= 82  Precision=0.000  Recall=0.000  F1=0.000  FPR=0.000026
+
+Context-Aware (Logistic Regression)
+  k = 20                 TP=  0  FP=        20  FN= 82  Precision=0.000  Recall=0.000  F1=0.000  FPR=0.000001
+  k = 100                TP=  0  FP=       100  FN= 82  Precision=0.000  Recall=0.000  F1=0.000  FPR=0.000003
+  k = 1,000              TP=  0  FP=     1,000  FN= 82  Precision=0.000  Recall=0.000  F1=0.000  FPR=0.000026
+
+=== NATURAL DECISION CUT OF EACH SCORER ===
+Baseline 1 (Severity-Only)
+  alerted events: 1,117,419
+  score = 1 (all fails)  TP=  1  FP= 1,117,418  FN= 81  Precision=0.000  Recall=0.012  F1=0.000  FPR=0.028564
+
+Baseline 2 (Metadata-Only)
+  alerted events: 11,620,488
+  p >= 0.5               TP= 70  FP=11,620,418  FN= 12  Precision=0.000  Recall=0.854  F1=0.000  FPR=0.297050
+
+Baseline 2b (Metadata One-Hot)
+  alerted events: 2,304
+  p >= 0.5               TP= 82  FP=     2,222  FN=  0  Precision=0.036  Recall=1.000  F1=0.069  FPR=0.000057
+
+Context-Aware (Equal Weights)
+  no natural cut: the equal-weight score is not a probability
+
+Context-Aware (Logistic Regression)
+  alerted events: 2,586,761
+  p >= 0.5               TP= 14  FP= 2,586,747  FN= 68  Precision=0.000  Recall=0.171  F1=0.000  FPR=0.066124
+
+Precision@k reproduced from test_scored.pkl equals the stage-4 capture for all five methods and all three depths (asserted).
+Done.

@@ -1,0 +1,53 @@
+Loading scored test data...
+Attacks: 82  Normals: 39,119,426
+Using a fixed random sample of 200,000 normal events for bootstrap
+
+Running 1000 paired bootstrap resamples...
+  100/1000 done
+  200/1000 done
+  300/1000 done
+  400/1000 done
+  500/1000 done
+  600/1000 done
+  700/1000 done
+  800/1000 done
+  900/1000 done
+  1000/1000 done
+
+=== BOOTSTRAP AUROC — 95% CONFIDENCE INTERVALS ===
+
+Baseline 1 (Severity-Only)             AUROC = 0.492   [95% CI: 0.485 – 0.504]
+Baseline 2 (Metadata-Only)             AUROC = 0.787   [95% CI: 0.762 – 0.807]
+Baseline 2b (Metadata One-Hot)         AUROC = 1.000   [95% CI: 1.000 – 1.000]
+Context-Aware (Equal Weights)          AUROC = 0.416   [95% CI: 0.352 – 0.482]
+Context-Aware (Logistic Regression)    AUROC = 0.675   [95% CI: 0.619 – 0.725]
+
+=== RQ1 SIGNIFICANCE TEST ===
+Context-Aware (Logistic Regression) vs Baseline 2 (Metadata-Only)
+
+AUROC difference (Context-Aware − Baseline 2 (Metadata-Only)):
+  Mean:    -0.111
+  95% CI:  [-0.174, -0.055]
+
+  --> CI excludes zero, negative: context-aware SIGNIFICANTLY underperforms this baseline.
+
+=== RQ1 SIGNIFICANCE TEST ===
+Context-Aware (Logistic Regression) vs Baseline 2b (Metadata One-Hot)
+
+AUROC difference (Context-Aware − Baseline 2b (Metadata One-Hot)):
+  Mean:    -0.325
+  95% CI:  [-0.381, -0.275]
+
+  --> CI excludes zero, negative: context-aware SIGNIFICANTLY underperforms this baseline.
+
+=== RQ2 ABLATION — PAIRED BOOTSTRAP 95% CONFIDENCE INTERVALS ===
+ΔAUROC = full equal-weight model − model without the feature
+(positive Δ: the feature helps; CI excluding zero: the change is
+statistically distinguishable)
+
+Without historical_fail_propensity   ΔAUROC = +0.005   [95% CI: -0.004, +0.018]   CI includes zero
+Without time_deviation               ΔAUROC = -0.309   [95% CI: -0.375, -0.240]   CI excludes zero
+Without src_novelty                  ΔAUROC = +0.052   [95% CI: +0.014, +0.097]   CI excludes zero
+Without dst_novelty                  ΔAUROC = +0.035   [95% CI: +0.002, +0.075]   CI excludes zero
+
+Done.
